@@ -1,0 +1,3 @@
+docker: Error response from daemon: failed to set up container networking: driver failed programming external connectivity on endpoint sae_monitoramento_BACK_17453303946110771f4_20001 (295b96a2d179ff98bb80e70dc2dc36aaafac505bacb1da16ac1ec071d1ef3fad): Bind for 0.0.0.0:20001 failed: port is already allocated
+
+Run 'docker run --help' for more information
