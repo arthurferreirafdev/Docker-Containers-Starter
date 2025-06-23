@@ -39,6 +39,9 @@ public class Report implements Cloneable {
     @NonNull
     ExceptionInfo exceptionInfo = new ExceptionInfo();
 
+    private String applicationName = "sae_cep_container_manager";
+    private ResetInfo resetInfo;
+
     /**
      * @return Shallow copy
      */
