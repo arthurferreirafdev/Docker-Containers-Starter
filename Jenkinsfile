@@ -7,12 +7,12 @@ pipeline {
 
     stages {
         stage('Checkout') {
-                    steps {
-                        git branch: 'master',
-                            credentialsId: 'bitbucket-app-password',
-                            url: 'https://alanpp@bitbucket.org/alanpp/sae_cep_container_manager.git'
-                    }
-                }
+            steps {
+                git branch: 'master',
+                    credentialsId: 'bitbucket-app-password',
+                    url: 'https://bitbucket.org/alanpp/sae_cep_container_manager.git'
+            }
+        }
 
         stage('Build') {
             steps {
