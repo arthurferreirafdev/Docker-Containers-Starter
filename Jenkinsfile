@@ -7,10 +7,12 @@ pipeline {
 
     stages {
         stage('Checkout') {
-            steps {
-                git branch: 'master', url: 'git@github.com:ThurFerreira/Docker-Containers-Starter.git'
-            }
-        }
+                    steps {
+                        git branch: 'master',
+                            credentialsId: 'bitbucket-app-password',
+                            url: 'https://bitbucket.org/seu-usuario/seu-repositorio.git'
+                    }
+                }
 
         stage('Build') {
             steps {
