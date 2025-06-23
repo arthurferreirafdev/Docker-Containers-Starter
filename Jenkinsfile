@@ -10,7 +10,7 @@ pipeline {
                     steps {
                         git branch: 'master',
                             credentialsId: 'bitbucket-app-password',
-                            url: 'https://bitbucket.org/seu-usuario/seu-repositorio.git'
+                            url: 'https://alanpp@bitbucket.org/alanpp/sae_cep_container_manager.git'
                     }
                 }
 
