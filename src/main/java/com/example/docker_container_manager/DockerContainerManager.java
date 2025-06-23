@@ -62,52 +62,19 @@ public class DockerContainerManager {
 
     public InstanciaMonitoramento startNewContainers() throws IOException, InterruptedException {
         String serialNumber = generateUniqueSerialNumber();
-        Container frontend = new Container();
         Container backend = new Container();
 
         //verifica se os container foram criados com sucesso, e manda inicialos
-        while(frontend.getError() == null && backend.getError() == null){
+        while(backend.getError() == null){
             dockerExitPort = getNextPort();
-            frontend = startFront(serialNumber, dockerExitPort);
             backend = startBack(serialNumber, dockerExitPort);
         }
 
-        String route = "http://" + serverAddress + ":" + frontend.getPort();
-        //String route = "http://10.3.192.81" + ":" + frontend.getPort();
-
         String dockerContainerHostName = backend.getDocker_container_ID().substring(0, 12);
-        return new InstanciaMonitoramento(dockerContainerHostName, backend, frontend, route);
-    }
-
-    //inicia um container de frontend
-    private Container startFront(String serialNumber, int dockerExitPort) throws IOException {
-        String dockerContainerId = null;
-        String containerName = null;
-        int exitValue = 0;
-        String error = null;
-
-        try {
-            containerName = "sae_monitoramento_FRONTEND" + "_" + serialNumber + "_" + dockerExitPort;
-            String dockerRunString = "docker run -d -p " + dockerExitPort + ":12430 --name " + containerName + " -it " + "sae_monitoramento_frontend";
-            String status;
-
-            Process process = Runtime.getRuntime().exec(dockerRunString);
-            System.out.println("\n\n" + "container sae_monitoramento_FRONTEND_" + serialNumber + "_" + dockerExitPort + " started \n\n");
-            dockerContainerId = writeContainersUp(process, String.valueOf(dockerExitPort));
-            error = writeError(process);
-
-            int exitCode = process.waitFor();
-            exitValue = process.exitValue();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return new Container(dockerContainerId, containerName, String.valueOf(exitValue), String.valueOf(dockerExitPort), error);
+        return new InstanciaMonitoramento(dockerContainerHostName, backend);
     }
 
     //inicia um container de backend
-
     private Container startBack(String serialNumber, int dockerExitPort) throws IOException {
         String dockerContainerId = null;
         String containerName = null;
