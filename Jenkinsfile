@@ -50,6 +50,7 @@ pipeline {
         stage('Run New App') {
             steps {
                 sh '''
+                ls
                 nohup java -jar target/$JAR_NAME > app.log 2>&1 &
                 echo $! > $PID_FILE
                 echo "Application started with PID $(cat $PID_FILE)"
