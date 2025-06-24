@@ -1,19 +1,16 @@
 pipeline {
-    agent any
+    agent {
+             docker {
+                 image 'maven:3.9.6-eclipse-temurin-17'
+                 args '-v /root/.m2:/root/.m2' // Cache do Maven
+             }
+         }
 
     environment {
         JAR_NAME = 'docker_container_manager-0.0.1-SNAPSHOT.jar'
     }
 
     stages {
-//         stage('Checkout') {
-//             steps {
-//                 git branch: 'master',
-//                     credentialsId: 'd493f0b8-ca71-4e05-8abc-8b1a0e255d93',
-//                     url: 'https://bitbucket.org/alanpp/sae_cep_container_manager.git'
-//             }
-//         }
-
         stage('Build') {
             steps {
                 sh 'mvn clean install'
