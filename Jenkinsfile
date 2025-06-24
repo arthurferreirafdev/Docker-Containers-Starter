@@ -6,13 +6,13 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'master',
-                    credentialsId: 'd493f0b8-ca71-4e05-8abc-8b1a0e255d93',
-                    url: 'https://bitbucket.org/alanpp/sae_cep_container_manager.git'
-            }
-        }
+//         stage('Checkout') {
+//             steps {
+//                 git branch: 'master',
+//                     credentialsId: 'd493f0b8-ca71-4e05-8abc-8b1a0e255d93',
+//                     url: 'https://bitbucket.org/alanpp/sae_cep_container_manager.git'
+//             }
+//         }
 
         stage('Build') {
             steps {
