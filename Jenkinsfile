@@ -52,7 +52,7 @@ pipeline {
                 sh '''
                 export $BUILD_ID
                 daemonize -c $(pwd) -e app-error.log -o app.log -p $PID_FILE \
-                setsid java -Dspring.profiles.active=$ENV -jar target/$JAR_NAME > app.log 2>&1 < /dev/null &
+                java -Dspring.profiles.active=$ENV -jar target/$JAR_NAME > app.log 2>&1 < /dev/null &
                 echo $! > $PID_FILE
                 echo "Application started with PID $(cat $PID_FILE)"
                 '''
