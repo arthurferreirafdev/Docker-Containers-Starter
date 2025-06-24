@@ -47,11 +47,12 @@ pipeline {
 
         stage('Run New App') {
         //running app
-        //-Dspring.profiles.active=ENV sets spring profile variable
+        //-Dspring.profiles.active=ENV | sets spring profile variable
             steps {
                 sh '''
                 export $BUILD_ID
-                setsid java -Dhudson.util.ProcessTree.disable=true -Dspring.profiles.active=$ENV -jar target/$JAR_NAME > app.log 2>&1 < /dev/null &
+                daemonize -c $(pwd) -e app-error.log -o app.log -p $PID_FILE \
+                setsid java -Dspring.profiles.active=$ENV -jar target/$JAR_NAME > app.log 2>&1 < /dev/null &
                 echo $! > $PID_FILE
                 echo "Application started with PID $(cat $PID_FILE)"
                 '''
