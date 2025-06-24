@@ -50,7 +50,8 @@ pipeline {
         //-Dspring.profiles.active=ENV sets spring profile variable
             steps {
                 sh '''
-                java -Dspring.profiles.active=$ENV -jar target/$JAR_NAME &
+                export $BUILD_ID
+                nohup java -Dspring.profiles.active=$ENV -jar target/$JAR_NAME &
                 echo $! > $PID_FILE
                 echo "Application started with PID $(cat $PID_FILE)"
                 '''
