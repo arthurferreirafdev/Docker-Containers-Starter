@@ -1,10 +1,9 @@
 pipeline {
-    agent {
-             docker {
-                 image 'maven:3.9.6-eclipse-temurin-17'
-                 args '-v /root/.m2:/root/.m2' // Cache do Maven
-             }
-         }
+    agent any
+
+    tools {
+        maven 'Maven_3'
+    }
 
     environment {
         JAR_NAME = 'docker_container_manager-0.0.1-SNAPSHOT.jar'
