@@ -12,7 +12,7 @@ pipeline {
     environment {
         JAR_NAME = 'docker_container_manager-0.0.1-SNAPSHOT.jar'
         PID_FILE = 'app.pid'
-        SPRING_CONFIG_LOCATION = "${params.Environment}"
+        ENV = "${params.Environment}"
     }
 
 
@@ -47,8 +47,8 @@ pipeline {
         stage('Run New App') {
             steps {
                 sh '''
-                ls
-                nohup java -Dspring.profiles.active=$SPRING_PROFILES_ACTIVE -jar target/$JAR_NAME > app.log 2>&1 &
+                echo $ENV
+                nohup java -Dspring.profiles.active=ENV -jar target/$JAR_NAME > app.log 2>&1 &
                 echo $! > $PID_FILE
                 echo "Application started with PID $(cat $PID_FILE)"
                 '''
