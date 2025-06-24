@@ -47,8 +47,7 @@ pipeline {
         stage('Run New App') {
             steps {
                 sh '''
-                echo $ENV
-                nohup java -Dspring.profiles.active=ENV -jar target/$JAR_NAME > app.log 2>&1 &
+                nohup java -Dspring.profiles.active=ENV -jar target/$JAR_NAME &
                 echo $! > $PID_FILE
                 echo "Application started with PID $(cat $PID_FILE)"
                 '''
