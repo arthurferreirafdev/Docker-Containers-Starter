@@ -18,18 +18,16 @@ pipeline {
 
         stage('Stop Old App') {
             steps {
-                script {
-                    sh '''
-                    PID=$(pgrep -f $JAR_NAME)
-                    if [ ! -z "$PID" ]; then
-                      echo "Stopping process $PID"
-                      kill $PID
-                      sleep 5
-                    else
-                      echo "No process running"
-                    fi
-                    '''
-                }
+                sh '''
+                PID=$(pgrep -f $JAR_NAME)
+                if [ ! -z "$PID" ]; then
+                  echo "Stopping process $PID"
+                  sudo kill $PID
+                  sleep 5
+                else
+                  echo "No process running"
+                fi
+                '''
             }
         }
 
