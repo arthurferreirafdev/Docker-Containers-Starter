@@ -12,7 +12,7 @@ pipeline {
     environment {
         JAR_NAME = 'docker_container_manager-0.0.1-SNAPSHOT.jar'
         PID_FILE = 'app.pid'
-        SPRING_CONFIG_LOCATION = "${parameters.Environment}"
+        SPRING_CONFIG_LOCATION = "${params.Environment}"
     }
 
 
