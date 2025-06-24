@@ -51,7 +51,7 @@ pipeline {
             steps {
                 sh '''
                 export $BUILD_ID
-                setsid java -Dspring.profiles.active=$ENV -jar target/$JAR_NAME > app.log 2>&1 < /dev/null &
+                setsid java -Dhudson.util.ProcessTree.disable=true -Dspring.profiles.active=$ENV -jar target/$JAR_NAME > app.log 2>&1 < /dev/null &
                 echo $! > $PID_FILE
                 echo "Application started with PID $(cat $PID_FILE)"
                 '''
