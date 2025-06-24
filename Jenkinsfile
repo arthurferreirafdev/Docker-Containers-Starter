@@ -51,7 +51,7 @@ pipeline {
             steps {
                 sh '''
                 export $BUILD_ID
-                nohup java -Dspring.profiles.active=$ENV -jar target/$JAR_NAME &
+                setsid java -Dspring.profiles.active=$ENV -jar target/$JAR_NAME > app.log 2>&1 < /dev/null &
                 echo $! > $PID_FILE
                 echo "Application started with PID $(cat $PID_FILE)"
                 '''
