@@ -13,6 +13,7 @@ pipeline {
         JAR_NAME = 'docker_container_manager-0.0.1-SNAPSHOT.jar'
         PID_FILE = 'app.pid'
         ENV = "${params.Environment}"
+        BUILD_ID = 'dontKillMe'
     }
 
 
