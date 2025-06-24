@@ -5,14 +5,17 @@ pipeline {
         maven 'Maven_3'
     }
 
+    parameters {
+            string(name: 'Environment', defaultValue: '', description: 'Ambiente de configuração')
+        }
+
     environment {
         JAR_NAME = 'docker_container_manager-0.0.1-SNAPSHOT.jar'
         PID_FILE = 'app.pid'
+        SPRING_CONFIG_LOCATION = "${parameters.Environment}"
     }
 
-    parameters {
-            string(name: 'SPRING_CONFIG_LOCATION', defaultValue: '', description: 'Ambiente de configuração')
-        }
+
 
     stages {
         stage('Build') {
