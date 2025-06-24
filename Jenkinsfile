@@ -11,16 +11,10 @@ pipeline {
     }
 
     parameters {
-            string(name: 'ENV', defaultValue: '', description: 'Ambiente de configuração')
+            string(name: 'SPRING_CONFIG_LOCATION', defaultValue: '', description: 'Ambiente de configuração')
         }
 
     stages {
-        stage('Copy Config') {
-            steps {
-                sh 'mkdir -p resources && cp src/main/resources/application.$ENV.properties resources/application.properties'
-            }
-        }
-
         stage('Build') {
             steps {
                 sh 'mvn clean install'
