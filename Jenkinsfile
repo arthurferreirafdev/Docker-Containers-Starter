@@ -2,18 +2,18 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven_3'
+        maven 'Maven_3' //setting maven for build project
     }
 
-    parameters {
+    parameters { //(build with parameters in jenkins)
             string(name: 'Environment', defaultValue: '', description: 'Ambiente de configuração')
         }
 
     environment {
         JAR_NAME = 'docker_container_manager-0.0.1-SNAPSHOT.jar'
         PID_FILE = 'app.pid'
-        ENV = "${params.Environment}"
-        BUILD_ID = 'dontKillMe'
+        ENV = "${params.Environment}" //defininco variavel de ambiente para que o spring selecione o perfil desejado (build with parameters)
+        BUILD_ID = 'dontKillMe' //evitar que o jenkins mate o processo em background resultante
     }
 
 
@@ -25,7 +25,7 @@ pipeline {
             }
         }
 
-        stage('Stop Old App') {
+        stage('Stop Old App') { //stopping last app
             steps {
                 sh '''
                 if [ -f $PID_FILE ]; then
@@ -46,9 +46,11 @@ pipeline {
         }
 
         stage('Run New App') {
+        //running app
+        //-Dspring.profiles.active=ENV sets spring profile variable
             steps {
                 sh '''
-                java -Dspring.profiles.active=ENV -jar target/$JAR_NAME &
+                java -Dspring.profiles.active=$ENV -jar target/$JAR_NAME &
                 echo $! > $PID_FILE
                 echo "Application started with PID $(cat $PID_FILE)"
                 '''
