@@ -17,15 +17,11 @@ public class InstanciaMonitoramento {
     Long idArvoreDecisao;
     String uptime;
     Container backend;
-    Container frontend;
-    String route;
 
-    public InstanciaMonitoramento(String dockerContainerHostName, Container backend, Container frontend, String route) {
+    public InstanciaMonitoramento(String dockerContainerHostName, Container backend) {
         this.dockerContainerHostName = dockerContainerHostName;
         this.monitoramentoId = (new java.util.Random().nextLong());
         this.uptime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         this.backend = backend;
-        this.frontend = frontend;
-        this.route = route;
     }
 }
