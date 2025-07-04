@@ -25,36 +25,34 @@ pipeline {
             }
         }
 
-        stage('Stop Old App') { //stopping last app
-            steps {
-                sh '''
-                if [ -f $PID_FILE ]; then
-                  PID=$(cat $PID_FILE)
-                  if kill -0 $PID > /dev/null 2>&1; then
-                    echo "Stopping process $PID"
-                    kill $PID
-                    sleep 5
-                  else
-                    echo "Process $PID not running"
-                  fi
-                  rm -f $PID_FILE
-                else
-                  echo "No PID file found. No process to stop."
-                fi
-                '''
-            }
-        }
+//         stage('Stop Old App') { //stopping last app
+//             steps {
+//                 sh '''
+//                 if [ -f $PID_FILE ]; then
+//                   PID=$(cat $PID_FILE)
+//                   if kill -0 $PID > /dev/null 2>&1; then
+//                     echo "Stopping process $PID"
+//                     kill $PID
+//                     sleep 5
+//                   else
+//                     echo "Process $PID not running"
+//                   fi
+//                   rm -f $PID_FILE
+//                 else
+//                   echo "No PID file found. No process to stop."
+//                 fi
+//                 '''
+//             }
+//         }
 
         stage('Run New App') {
         //running app
         //-Dspring.profiles.active=ENV | sets spring profile variable
             steps {
-                sh '''
-                export $BUILD_ID
-                java -Dspring.profiles.active=$ENV -jar target/$JAR_NAME
-                echo $! > $PID_FILE
-                echo "Application started with PID $(cat $PID_FILE)"
-                '''
+                sh """
+                scp target/${JAR_NAME} deploy@10.3.192.100:/opt/sae_container_manager
+                ssh deploy@10.3.192.100 'systemctl restart sae_container_manager'
+                """
             }
         }
     }
