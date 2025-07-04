@@ -27,7 +27,7 @@ pipeline {
 
         stage('Prepare SSH') {
             steps {
-                sshagent(['ssh-credential-id']) {
+                sshagent(['ssh-deploy-key']) {
                     // Adiciona o host remoto ao known_hosts
                     sh '''
                     mkdir -p ~/.ssh
@@ -40,7 +40,7 @@ pipeline {
 
         stage('Run New App') {
             steps {
-                sshagent(['ssh-credential-id']) {
+                sshagent(['ssh-deploy-key']) {
                     sh """
                     scp target/${JAR_NAME} ${SERVER}:/opt/sae_container_manager
                     ssh ${SERVER} 'systemctl restart sae_container_manager'
