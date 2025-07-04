@@ -53,14 +53,14 @@ pipeline {
                 }
             }
         }
-    }
 
-    post {
-        success {
-            echo '✅ Deploy realizado com sucesso!'
+
+        post {
+            success {
+                echo '✅ Deploy realizado com sucesso!'
+            }
+            failure {
+                echo '❌ Ocorreu uma falha no pipeline.'
+            }
         }
-        failure {
-            echo '❌ Ocorreu uma falha no pipeline.'
-        }
-    }
 }
