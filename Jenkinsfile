@@ -14,6 +14,8 @@ pipeline {
         PID_FILE = 'app.pid'
         ENV = "${params.Environment}" //defininco variavel de ambiente para que o spring selecione o perfil desejado (build with parameters)
         BUILD_ID = 'dontKillMe' //evitar que o jenkins mate o processo em background resultante
+        SERVER = 'deploy@10.3.192.100'
+        REMOTE_HOST = '10.3.192.100'
     }
 
 
@@ -25,34 +27,30 @@ pipeline {
             }
         }
 
-//         stage('Stop Old App') { //stopping last app
-//             steps {
-//                 sh '''
-//                 if [ -f $PID_FILE ]; then
-//                   PID=$(cat $PID_FILE)
-//                   if kill -0 $PID > /dev/null 2>&1; then
-//                     echo "Stopping process $PID"
-//                     kill $PID
-//                     sleep 5
-//                   else
-//                     echo "Process $PID not running"
-//                   fi
-//                   rm -f $PID_FILE
-//                 else
-//                   echo "No PID file found. No process to stop."
-//                 fi
-//                 '''
-//             }
-//         }
+        stages {
+        stage('Prepare SSH') {
+            steps {
+                sshagent(['ssh-credential-id']) {
+                    // Adiciona o host remoto no known_hosts para evitar erro de verificação
+                    sh '''
+                    mkdir -p ~/.ssh
+                    touch ~/.ssh/known_hosts
+                    ssh-keyscan -H ${REMOTE_HOST} >> ~/.ssh/known_hosts
+                    '''
+                }
+            }
+        }
 
         stage('Run New App') {
         //running app
         //-Dspring.profiles.active=ENV | sets spring profile variable
             steps {
+                sshagent(['ssh-credential-id']){
                 sh """
-                scp target/${JAR_NAME} deploy@10.3.192.100:/opt/sae_container_manager
-                ssh deploy@10.3.192.100 'systemctl restart sae_container_manager'
+                scp target/${JAR_NAME} ${SERVER}:/opt/sae_container_manager
+                ssh ${SERVER} 'systemctl restart sae_container_manager'
                 """
+                }
             }
         }
     }
