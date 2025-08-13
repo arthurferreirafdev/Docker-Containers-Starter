@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/container")
@@ -55,5 +57,15 @@ public class HttpController {
                     .body("Error removing container: " + e.getMessage());
         }
         return null;
+    }
+
+    @GetMapping("/health")
+    public ResponseEntity<Object> checkContainersHealth(@RequestParam List<String> containerIds){
+        try {
+            Map<String, String> containersHealthMap = dockerContainerManager.checkContainerHealth(containerIds);
+            return ResponseEntity.ok(containersHealthMap);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

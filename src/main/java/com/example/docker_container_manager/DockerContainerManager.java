@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.net.InetAddress;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 @Component
 public class DockerContainerManager {
@@ -177,5 +180,34 @@ public class DockerContainerManager {
 
         return logString;
     }
+
+    public Map<String, String> checkContainerHealth(List<String> containerIds) throws IOException {
+        Map<String, String> containersHealthMap = new HashMap<String, String>();
+        try{
+            for (String containerId : containerIds){
+                String command = "docker inspect -f '{{.State.Status}}' " + containerId;
+                String containerStatus = execCliCommand(command);
+                System.out.println(containerStatus);
+                containersHealthMap.put(containerId, containerStatus);
+            }
+        }catch (Exception e){
+            containersHealthMap = null;
+        }
+
+        return containersHealthMap;
+    }
+
+    public String execCliCommand(String command) throws IOException {
+        Process process = Runtime.getRuntime().exec(command);;
+
+        BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        String stdoutLine;
+        while ((stdoutLine = stdInput.readLine()) != null) {
+            return stdoutLine;
+        }
+
+        return null;
+    }
+
 }
 
