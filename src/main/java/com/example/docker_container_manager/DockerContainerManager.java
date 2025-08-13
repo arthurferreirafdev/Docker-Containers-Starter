@@ -203,6 +203,9 @@ public class DockerContainerManager {
         BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String stdoutLine;
         while ((stdoutLine = stdInput.readLine()) != null) {
+            if(stdoutLine.isEmpty()){
+                return "not exist";
+            }
             return stdoutLine;
         }
 
