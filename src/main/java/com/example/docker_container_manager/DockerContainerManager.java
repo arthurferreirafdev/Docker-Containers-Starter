@@ -89,8 +89,8 @@ public class DockerContainerManager {
             dockerExitPort--;
 
             containerName = "sae_monitoramento_BACK" + "_" + serialNumber + "_" + dockerExitPort ;
-
-            String dockerRunString = "docker run -d -p " + dockerExitPort + ":60250 --name " + containerName + " -it " + "sae_monitoramento_back " + eventId;
+            String envVariables = "-e KAFKA_BROKER_1=10.3.192.19:9092,10.3.192.17:9092 -e PHYSIS_MONGO_DB=mongodb://general:RvrHbGKizj69yKJF@10.3.192.99:27017/?authSource=admin -e PHYSIS_ENV=dev";
+            String dockerRunString = "docker run " + envVariables + " -d -p " + dockerExitPort + ":60250 --name " + containerName + " -it " + "sae_monitoramento_back " + eventId;
             Process process = Runtime.getRuntime().exec(dockerRunString);
             System.out.println("\n\n" + "container sae_monitoramento_BACK_" + serialNumber + "_" + dockerExitPort + " started \n\n");
             dockerContainerId = writeContainersUp(process, String.valueOf(dockerExitPort));
