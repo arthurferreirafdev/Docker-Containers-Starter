@@ -63,14 +63,14 @@ public class DockerContainerManager {
         return exitValue;
     }
 
-    public InstanciaMonitoramento startNewContainers() throws IOException, InterruptedException {
+    public InstanciaMonitoramento startNewContainers(int eventId) throws IOException, InterruptedException {
         String serialNumber = generateUniqueSerialNumber();
         Container backend = new Container();
 
         //verifica se os container foram criados com sucesso, e manda inicialos
         while(backend.getError() == null){
             dockerExitPort = getNextPort();
-            backend = startBack(serialNumber, dockerExitPort);
+            backend = startBack(serialNumber, dockerExitPort, eventId);
         }
 
         String dockerContainerHostName = backend.getDocker_container_ID().substring(0, 12);
@@ -78,7 +78,7 @@ public class DockerContainerManager {
     }
 
     //inicia um container de backend
-    private Container startBack(String serialNumber, int dockerExitPort) throws IOException {
+    private Container startBack(String serialNumber, int dockerExitPort, int eventId) throws IOException {
         String dockerContainerId = null;
         String containerName = null;
         int exitValue = 0;
@@ -90,7 +90,7 @@ public class DockerContainerManager {
 
             containerName = "sae_monitoramento_BACK" + "_" + serialNumber + "_" + dockerExitPort ;
 
-            String dockerRunString = "docker run -d -p " + dockerExitPort + ":60250 --name " + containerName + " -it " + "sae_monitoramento_back";
+            String dockerRunString = "docker run -d -p " + dockerExitPort + ":60250 --name " + containerName + " -it " + "sae_monitoramento_back " + eventId;
             Process process = Runtime.getRuntime().exec(dockerRunString);
             System.out.println("\n\n" + "container sae_monitoramento_BACK_" + serialNumber + "_" + dockerExitPort + " started \n\n");
             dockerContainerId = writeContainersUp(process, String.valueOf(dockerExitPort));

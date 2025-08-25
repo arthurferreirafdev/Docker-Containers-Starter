@@ -6,10 +6,7 @@ import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -22,10 +19,10 @@ public class HttpController {
     @Autowired
     private DockerContainerManager dockerContainerManager;
 
-    @GetMapping("/create")
-    public ResponseEntity<Object> createContainer(){
+    @GetMapping("/create/{eventId}")
+    public ResponseEntity<Object> createContainer(@PathVariable int eventId){
         try {
-            InstanciaMonitoramento instanciaMonitoramento = dockerContainerManager.startNewContainers();
+            InstanciaMonitoramento instanciaMonitoramento = dockerContainerManager.startNewContainers(eventId);
             System.out.println(instanciaMonitoramento);
             System.out.println("");
             String response = new Gson().toJson(instanciaMonitoramento);
