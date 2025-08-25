@@ -20,7 +20,7 @@ public class HttpController {
     private DockerContainerManager dockerContainerManager;
 
     @GetMapping("/create/{eventId}")
-    public ResponseEntity<Object> createContainer(@PathVariable int eventId){
+    public ResponseEntity<Object> createContainer(@PathVariable("eventId") int eventId){
         try {
             InstanciaMonitoramento instanciaMonitoramento = dockerContainerManager.startNewContainers(eventId);
             System.out.println(instanciaMonitoramento);
