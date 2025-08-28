@@ -1,0 +1,72 @@
+Tutorial: Deploy de Aplicação Java em Background com Jenkins
+============================================================
+
+Este guia resume os passos para configurar um pipeline Jenkins que clona um repositório Bitbucket,
+constrói uma aplicação Java e a executa em segundo plano.
+
+------------------------------------------------------------
+Passo 1: Configurar Ferramentas no Jenkins
+------------------------------------------------------------
+
+Antes de criar o pipeline, o Jenkins precisa saber onde encontrar o Git e o Maven.
+
+1. No painel do Jenkins, vá para **Gerenciar Jenkins > Ferramentas Globais**.
+2. **Git**: Procure pela seção "Git" e certifique-se de que uma instalação existe ou que
+   "Instalar automaticamente" está selecionado. Dê um nome, por exemplo, `Git`.
+3. **Maven**: Na seção "Maven", clique em "Adicionar Maven". Marque "Instalar automaticamente"
+   e defina um nome, como `Maven_3` ou `M3_HOME`.
+
+------------------------------------------------------------
+Passo 2: Adicionar Credenciais do Bitbucket
+------------------------------------------------------------
+
+O Jenkins precisa de permissão para acessar seu repositório.
+
+1. Vá para **Gerenciar Jenkins > Gerenciar Credenciais**.
+2. Clique em **Adicionar Credenciais**.
+3. Selecione **Username with password** ou **SSH Username with private key**.
+4. Preencha com suas informações de login do Bitbucket e dê um ID fácil de lembrar,
+   como `bitbucket-credenciais`.
+
+------------------------------------------------------------
+Passo 3: Configurar Permissões de Usuário
+------------------------------------------------------------
+
+O usuário que executa o Jenkins (`jenkins`) precisa de permissão para criar e manipular
+arquivos no diretório de deploy.
+
+1. Acesse seu servidor via terminal.
+2. Dê ao usuário `jenkins` permissão para usar **sudo sem senha**. Isso é fundamental para que
+   o pipeline funcione sem travar.
+
+   ```bash
+   sudo visudo
+   ```
+
+   Adicione a seguinte linha no final do arquivo:
+
+   ```
+   jenkins ALL=(ALL) NOPASSWD: ALL
+   ```
+
+   Salve e saia (`ESC`, `:wq`).
+
+------------------------------------------------------------
+Passo 4: Criar o Jenkinsfile
+------------------------------------------------------------
+
+Este é o arquivo que define a lógica do seu pipeline.
+Use o código abaixo como base, ajustando os valores para o seu projeto.
+
+*(Aqui você deve inserir o conteúdo do Jenkinsfile personalizado.)*
+
+------------------------------------------------------------
+Passo 5: Iniciar o Pipeline
+------------------------------------------------------------
+
+1. Crie um novo **Pipeline** no Jenkins.
+2. Na seção "Pipeline", escolha **Pipeline script from SCM**.
+3. Selecione **Git** e insira a URL do seu repositório.
+4. Selecione a credencial do Bitbucket.
+5. Defina o caminho do script para o seu `Jenkinsfile`.
+6. Salve e clique em **Build Now**.
