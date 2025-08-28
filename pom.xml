@@ -65,6 +65,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>sae_container_manager</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

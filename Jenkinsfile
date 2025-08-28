@@ -1,61 +1,56 @@
 pipeline {
     agent any
 
-    tools {
-        maven 'Maven_3' // setting maven for build project
-    }
-
-    parameters {
-        string(name: 'Environment', defaultValue: '', description: 'Ambiente de configuração')
-    }
-
-    environment {
-        JAR_NAME = 'docker_container_manager-0.0.1-SNAPSHOT.jar'
-        PID_FILE = 'app.pid'
-        ENV = "${params.Environment}" // variável de ambiente para perfil Spring
-        BUILD_ID = 'dontKillMe'       // impede o Jenkins de matar o processo background
-        SERVER = 'deploy@10.3.192.100'
-        REMOTE_HOST = '10.3.192.100'
-    }
-
     stages {
-        stage('Build') {
+        stage('Checkout do Código') {
             steps {
-                sh 'mvn clean install'
+                // Comando para clonar o repositório do Bitbucket
+                // O 'credentialsId' deve ser o ID da sua credencial no Jenkins
+                git branch: 'master',
+                    credentialsId: '6d342202-b7ee-44ab-9973-b00448f9b968',
+                    url: 'https://alanpp@bitbucket.org/alanpp/sae_cep_container_manager.git'
             }
         }
 
-        stage('Prepare SSH') {
+        stage('Build e Empacotamento') {
             steps {
-                sshagent(['ssh-deploy-key']) {
-                    // Adiciona o host remoto ao known_hosts
-                    sh '''
-                    mkdir -p ~/.ssh
-                    touch ~/.ssh/known_hosts
-                    ssh-keyscan -H ${REMOTE_HOST} >> ~/.ssh/known_hosts
-                    '''
+                // O Jenkins já estará no diretório do projeto clonado
+                // Comando para construir sua aplicação Java e gerar o .jar
+                sh 'mvn clean package -DskipTests'
+            }
+        }
+
+        stage('Preparar Diretório de Deploy') {
+                    steps {
+                        echo 'Garantindo que o diretório de deploy exista e tenha permissões corretas...'
+                        sh 'sudo mkdir -p /opt/sae_container_manager'
+                        sh 'sudo chown -R jenkins:jenkins /opt/sae_container_manager'
+                    }
                 }
-            }
-        }
 
-        stage('Run New App') {
+        stage('Execução em Background') {
             steps {
-                sshagent(['ssh-deploy-key']) {
+                script {
+                    def jarName = 'sae_container_manager.jar'
+                    def localPath = '/opt/sae_container_manager'
+
+                    // Primeiro, copia o .jar que foi gerado no passo de build
+                    sh "cp target/${jarName} ${localPath}"
+
+                    // Agora, executa a aplicação em background a partir do diretório de destino
                     sh """
-                    scp target/${JAR_NAME} ${SERVER}:/opt/sae_container_manager
-                    ssh ${SERVER} 'systemctl restart sae_container_manager'
+                        cd ${localPath}
+
+                        PIDS=\$(ps -ef | grep ${jarName} | grep -v grep | awk '{print \$2}')
+                        if [ -n "\$PIDS" ]; then
+                            echo "Aplicação já está rodando. Matando o processo: \$PIDS"
+                            kill -9 \$PIDS
+                        fi
+
+                        nohup java -Dspring.profiles.active=dev -jar ${jarName} > application.log 2>&1 &
                     """
                 }
             }
-        }
-    }
-
-    post {
-        success {
-            echo '✅ Deploy realizado com sucesso!'
-        }
-        failure {
-            echo '❌ Ocorreu uma falha no pipeline.'
         }
     }
 }
