@@ -20,42 +20,11 @@ public class ContainerService {
     String serverAddress;
     public final String systemPortFilePath = "resources/systemPortFile.txt";
 
-    public ContainerService() {
-        dockerExitPort = initializeMonitoramentoPort();
-    }
+    @Value("${docker.env.variables}")
+    List<String> dockerEnvVariables;
 
-    /**
-     * Inicializa a porta de monitoramento a partir de um arquivo.
-     * Trata de forma robusta o caso de o arquivo não existir ou não poder ser lido.
-     *
-     * @return A porta inicial.
-     * @throws ContainerServiceException se ocorrer um erro irrecuperável de I/O.
-     */
-    private int initializeMonitoramentoPort() {
-        int initialPort = 20000;
-        try (BufferedReader reader = new BufferedReader(new FileReader(systemPortFilePath))) {
-            String line = reader.readLine();
-            if (line == null || line.trim().isEmpty()) {
-                System.err.println("Arquivo de porta está vazio. Usando a porta inicial padrão.");
-                return initialPort;
-            }
-            return Integer.parseInt(line.trim());
-        } catch (FileNotFoundException fnf) {
-            System.out.println("Arquivo de porta não encontrado. Criando novo com a porta inicial " + initialPort);
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(systemPortFilePath, false))) {
-                writer.write(String.valueOf(initialPort));
-                return initialPort;
-            } catch (IOException ioe) {
-                // Erro ao escrever, lança uma exceção para o chamador.
-                throw new ContainerServiceException("Erro ao escrever no arquivo de porta: " + systemPortFilePath, ioe);
-            }
-        } catch (IOException ioe) {
-            // Erro ao ler o arquivo, lança uma exceção.
-            throw new ContainerServiceException("Erro ao ler o arquivo de porta: " + systemPortFilePath, ioe);
-        } catch (NumberFormatException nfe) {
-            // Erro de formato, lança uma exceção.
-            throw new ContainerServiceException("Conteúdo do arquivo de porta inválido. Esperado um número.", nfe);
-        }
+    public ContainerService() {
+        dockerExitPort = 20000;
     }
 
     /**
@@ -125,12 +94,10 @@ public class ContainerService {
     private Container startBack(String serialNumber, int dockerExitPort, int eventId) {
         String containerName = null;
         String dockerContainerId = null;
-
         try {
             containerName = "sae_monitoramento_BACK" + "_" + serialNumber + "_" + dockerExitPort;
-            String envVariables = "-e KAFKA_BROKER_1=10.3.192.19:9092,10.3.192.17:9092 -e PHYSIS_MONGO_DB=mongodb://general:RvrHbGKizj69yKJF@10.3.192.99:27017/?authSource=admin -e PHYSIS_ENV=dev";
-            String dockerRunString = "docker run " + envVariables + " -d -p " + dockerExitPort + ":60250 --name " + containerName + " -it " + "sae_monitoramento_back " + eventId;
-
+            String envVariablesString = buildDockerEnvVariablesString();
+            String dockerRunString = "docker run " + envVariablesString + " -d -p " + dockerExitPort + ":60250 --name " + containerName + " -it " + "sae_monitoramento_back " + eventId;
             String response = CLIService.execCommand(dockerRunString);
 
             // Assumindo que a primeira linha da resposta é o ID do container
@@ -217,5 +184,14 @@ public class ContainerService {
             System.err.println("Erro de I/O ao verificar a porta " + port + ": " + e.getMessage());
             return false;
         }
+    }
+
+    public String buildDockerEnvVariablesString() {
+        StringBuilder envString = new StringBuilder();
+        for (String key : dockerEnvVariables) {
+            envString.append(" -e ").append(key);
+        }
+
+        return envString.toString();
     }
 }
