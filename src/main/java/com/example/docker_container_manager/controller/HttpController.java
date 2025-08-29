@@ -1,6 +1,6 @@
-package com.example.docker_container_manager.connection;
+package com.example.docker_container_manager.controller;
 
-import com.example.docker_container_manager.DockerContainerManager;
+import com.example.docker_container_manager.ContainerService;
 import com.example.docker_container_manager.model.InstanciaMonitoramento;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -17,9 +16,9 @@ import java.util.Map;
 @RequestMapping("/container")
 public class HttpController {
     @Autowired
-    private DockerContainerManager dockerContainerManager;
+    private ContainerService dockerContainerManager;
 
-    @GetMapping("/create/{eventId}")
+    @PostMapping("/{eventId}")
     public ResponseEntity<Object> createContainer(@PathVariable("eventId") int eventId){
         try {
             InstanciaMonitoramento instanciaMonitoramento = dockerContainerManager.startNewContainers(eventId);
@@ -35,8 +34,8 @@ public class HttpController {
         }
     }
 
-    @GetMapping("/remove")
-    public ResponseEntity<Object> removeContainer(@RequestParam String containerId){
+    @DeleteMapping("/{containerId}")
+    public ResponseEntity<Object> removeContainer(@PathVariable String containerId){
         try {
             int exitValue = dockerContainerManager.removeContainer(containerId);
             String response;

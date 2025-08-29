@@ -13,7 +13,7 @@ public class CheckContainerStatusTest {
 
     @Test
     void shouldReturnAStringFromCLICommand(){
-        DockerContainerManager containerManager = new DockerContainerManager();
+        ContainerService containerManager = new ContainerService();
         List<String> commands = new ArrayList<>();
         commands.add("25cb0184eaa3");
 
