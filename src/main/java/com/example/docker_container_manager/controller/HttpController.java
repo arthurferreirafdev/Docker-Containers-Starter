@@ -20,18 +20,13 @@ public class HttpController {
 
     @PostMapping("/{eventId}")
     public ResponseEntity<Object> createContainer(@PathVariable("eventId") int eventId){
-        try {
-            InstanciaMonitoramento instanciaMonitoramento = dockerContainerManager.startNewContainers(eventId);
-            System.out.println(instanciaMonitoramento);
-            System.out.println("");
-            String response = new Gson().toJson(instanciaMonitoramento);
+        InstanciaMonitoramento instanciaMonitoramento = dockerContainerManager.startNewContainers(eventId);
+        System.out.println(instanciaMonitoramento);
+        System.out.println("");
+        String response = new Gson().toJson(instanciaMonitoramento);
 
-            return ResponseEntity.ok(response);
+        return ResponseEntity.ok(response);
 
-        } catch (InterruptedException | IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error starting new containers: " + e.getMessage());
-        }
     }
 
     @DeleteMapping("/{containerId}")
@@ -57,11 +52,7 @@ public class HttpController {
 
     @GetMapping("/health")
     public ResponseEntity<Object> checkContainersHealth(@RequestParam List<String> containerIds){
-        try {
-            Map<String, String> containersHealthMap = dockerContainerManager.checkContainerHealth(containerIds);
-            return ResponseEntity.ok(containersHealthMap);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        Map<String, String> containersHealthMap = dockerContainerManager.checkContainerHealth(containerIds);
+        return ResponseEntity.ok(containersHealthMap);
     }
 }
