@@ -50,6 +50,8 @@ pipeline {
                             kill -9 \$PIDS
                         fi
 
+                        pkill -f docker_container_manager-0.0.1-SNAPSHOT.jar || true
+
                         nohup java -Dspring.profiles.active=dev -jar ${jarName} > application.log 2>&1 &
                     """
                 }
