@@ -34,7 +34,7 @@ pipeline {
         stage('Execução em Background') {
             steps {
                 script {
-                    def jarName = 'sae_container_manager.jar'
+                    def jarName = 'docker_container_manager-0.0.1-SNAPSHOT.jar'
                     def localPath = '/opt/sae_container_manager'
 
                     // Primeiro, copia o .jar que foi gerado no passo de build
