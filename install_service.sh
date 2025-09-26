@@ -21,7 +21,7 @@ User=jenkins
 Group=jenkins
 WorkingDirectory=${APP_DIR}
 
-ExecStart=${JAVA_BIN} -Dspring.profiles.active=dev -jar ${APP_DIR}/${JAR_NAME}
+ExecStart=${JAVA_BIN} -Dspring.profiles.active=hml -jar ${APP_DIR}/${JAR_NAME}
 
 Restart=always
 RestartSec=5
