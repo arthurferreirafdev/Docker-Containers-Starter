@@ -47,9 +47,15 @@ arquivos no diretório de deploy.
 
    ```
    jenkins ALL=(ALL) NOPASSWD: ALL
+   jenkins ALL=(ALL) NOPASSWD: /bin/kill
+   deploy ALL=(ALL) NOPASSWD: /bin/systemctl restart sae_container_manager
    ```
 
    Salve e saia (`ESC`, `:wq`).
+
+   sudo touch /opt/sae_container_manager/application.log
+   sudo chown jenkins:jenkins /opt/sae_container_manager/application.log
+   sudo chmod 664 /opt/sae_container_manager/application.log
 
 ------------------------------------------------------------
 Passo 4: Criar o Jenkinsfile
