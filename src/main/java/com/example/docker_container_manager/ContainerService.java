@@ -35,7 +35,7 @@ public class ContainerService {
      * @throws ContainerServiceException se a operação de remoção falhar.
      */
     public int removeContainer(String docker_container_id) {
-        String dockerRmString = "docker rm " + docker_container_id + " -f";
+        String dockerRmString = "docker stop --signal=SIGINT " + docker_container_id;
         Process process = null;
         try {
             process = Runtime.getRuntime().exec(dockerRmString);
@@ -45,8 +45,20 @@ public class ContainerService {
             if (exitCode != 0) {
                 String stderr = new BufferedReader(new InputStreamReader(process.getErrorStream()))
                         .lines().collect(Collectors.joining("\n"));
+                throw new ContainerServiceException("Falha ao parar o container " + docker_container_id + ". Código de saída: " + exitCode + ". Erro: " + stderr);
+            }
+
+            dockerRmString = "docker rm " + docker_container_id + " -f";
+            process = Runtime.getRuntime().exec(dockerRmString);
+            exitCode = process.waitFor();
+
+            // Verifica o código de saída do processo.
+            if (exitCode != 0) {
+                String stderr = new BufferedReader(new InputStreamReader(process.getErrorStream()))
+                        .lines().collect(Collectors.joining("\n"));
                 throw new ContainerServiceException("Falha ao remover o container " + docker_container_id + ". Código de saída: " + exitCode + ". Erro: " + stderr);
             }
+
             return exitCode;
         } catch (IOException | InterruptedException e) {
             throw new ContainerServiceException("Erro durante a execução do comando docker rm", e);
