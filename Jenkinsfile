@@ -8,7 +8,7 @@ pipeline {
         stage('Checkout do Código') {
             steps {
                 git branch: 'master',
-                    credentialsId: '6d342202-b7ee-44ab-9973-b00448f9b968',
+                    credentialsId: 'b0743c51-8ac0-4dd5-b78e-b65abe58de0b',
                     url: 'https://alanpp@bitbucket.org/alanpp/sae_cep_container_manager.git'
             }
         }
